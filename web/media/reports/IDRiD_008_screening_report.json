@@ -1,0 +1,34 @@
+{
+    "project": "Diabetic Retinopathy AI Screening",
+    "image": "IDRiD_008.jpg",
+    "image_path": "/Users/ruchakadam/Documents/diabetic-retinopathy-ai/web/media/uploads/IDRiD_008.jpg",
+    "device": "mps",
+    "image_quality": {
+        "original": {
+            "focus": 28.24364554651512,
+            "brightness": 55.88045109555802,
+            "contrast": 40.568200169363685,
+            "fov": 0.6897348918591732,
+            "quality_score": 70.09,
+            "status": "GOOD"
+        },
+        "final": {
+            "quality_score": 70.09,
+            "status": "GOOD"
+        },
+        "enhancement_applied": false,
+        "quality_improvement": 0.0
+    },
+    "classification": {
+        "source": "ORIGINAL",
+        "referable_probability": 0.908167,
+        "threshold": 0.5,
+        "decision": "REFERABLE DR"
+    },
+    "explainability": {
+        "method": "Grad-CAM",
+        "generated": true,
+        "file": "/Users/ruchakadam/Documents/diabetic-retinopathy-ai/outputs/explainability/IDRiD_008_integrated_gradcam.png"
+    },
+    "disclaimer": "This is an AI-assisted screening prototype and not a clinical diagnosis."
+}

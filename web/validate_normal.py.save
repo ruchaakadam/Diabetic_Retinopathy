@@ -1,0 +1,309 @@
+from pathlib import Path
+import sys
+import csv
+
+# =========================================================
+# PROJECT PATH
+# =========================================================
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+SRC_PATH = PROJECT_ROOT / "src"
+
+if str(SRC_PATH) not in sys.path:
+    sys.path.insert(0, str(SRC_PATH))
+
+from inference.predict import run_pipeline
+
+
+# =========================================================
+# DATASET
+# =========================================================
+
+IMAGE_DIR = (
+    PROJECT_ROOT
+    / "data"
+    / "raw"
+    / "B. Disease Grading"
+    / "1. Original Images"
+    / "b. Testing Set"
+)
+
+
+NORMAL_IMAGES = [
+    "IDRiD_029",
+    "IDRiD_030",
+    "IDRiD_037",
+    "IDRiD_038",
+    "IDRiD_039",
+    "IDRiD_041",
+    "IDRiD_043",
+    "IDRiD_044",
+    "IDRiD_045",
+    "IDRiD_047",
+    "IDRiD_050",
+    "IDRiD_052",
+    "IDRiD_054",
+    "IDRiD_055",
+    "IDRiD_056",
+    "IDRiD_058",
+    "IDRiD_068",
+    "IDRiD_069",
+    "IDRiD_070",
+    "IDRiD_071",
+    "IDRiD_075",
+    "IDRiD_077",
+    "IDRiD_078",
+    "IDRiD_080",
+    "IDRiD_090",
+    "IDRiD_092",
+    "IDRiD_093",
+    "IDRiD_094",
+    "IDRiD_095",
+    "IDRiD_096",
+    "IDRiD_097",
+    "IDRiD_098",
+    "IDRiD_099",
+    "IDRiD_103",
+]
+
+
+# =========================================================
+# OUTPUT
+# =========================================================
+
+OUTPUT_FILE = (
+    PROJECT_ROOT
+    / "outputs"
+    / "evaluation"
+    / "normal_validation.csv"
+)
+
+OUTPUT_FILE.parent.mkdir(
+    parents=True,
+    exist_ok=True
+)
+
+
+# =========================================================
+# RUN VALIDATION
+# =========================================================
+
+rows = []
+
+correct = 0
+incorrect = 0
+errors = 0
+
+
+for name in NORMAL_IMAGES:
+
+    image_path = IMAGE_DIR / f"{name}.jpg"
+
+    print()
+    print("=" * 60)
+    print(f"Testing: {name}")
+    print("=" * 60)
+
+    if not image_path.exists():
+
+        print("ERROR: Image not found")
+
+        errors += 1
+
+        rows.append({
+            "image": name,
+            "ground_truth": "NORMAL",
+            "quality": "",
+            "classification_source": "",
+            "probability": "",
+            "decision": "",
+            "correct": "",
+            "error": "Image not found"
+        })
+
+        continue
+
+
+    try:
+
+        result = run_pipeline(
+            image_path
+        )
+
+        probability = float(
+            result.get(
+                "referable_probability",
+                0
+            )
+        )
+
+        decision = result.get(
+            "decision",
+            ""
+        )
+
+        quality = result.get(
+            "quality_status",
+            ""
+        )
+
+        source = result.get(
+            "classification_source",
+            ""
+        )
+
+
+        # =================================================
+        # NORMAL EXPECTED RESULT
+        # =================================================
+
+        is_correct = (
+            decision == "NON-REFERABLE DR"
+        )
+
+
+        if is_correct:
+            correct += 1
+        else:
+            incorrect += 1
+
+
+        print(
+            f"Quality: {quality}"
+        )
+
+        print(
+            f"Source: {source}"
+        )
+
+        print(
+            f"Probability: {probability:.4f}"
+        )
+
+        print(
+            f"Decision: {decision}"
+        )
+
+        print(
+            f"Correct: {is_correct}"
+        )
+
+
+        rows.append({
+            "image": name,
+            "ground_truth": "NORMAL",
+            "quality": quality,
+            "classification_source": source,
+            "probability": probability,
+            "probability_percent": probability * 100,
+            "decision": decision,
+            "correct": is_correct,
+            "error": ""
+        })
+
+
+    except Exception as error:
+
+        errors += 1
+
+        print(
+            f"ERROR: {error}"
+        )
+
+        rows.append({
+            "image": name,
+            "ground_truth": "NORMAL",
+            "quality": "",
+            "classification_source": "",
+            "probability": "",
+            "probability_percent": "",
+            "decision": "",
+            "correct": "",
+            "error": str(error)
+        })
+
+
+# =========================================================
+# SAVE CSV
+# =========================================================
+
+with open(
+    OUTPUT_FILE,
+    "w",
+    newline="",
+    encoding="utf-8"
+) as file:
+
+    writer = csv.DictWriter(
+        file,
+        fieldnames=[
+            "image",
+            "ground_truth",
+            "quality",
+            "classification_source",
+            "probability",
+            "probability_percent",
+            "decision",
+            "correct",
+            "error"
+        ]
+    )
+
+    writer.writeheader()
+
+    writer.writerows(
+        rows
+    )
+
+
+# =========================================================
+# SUMMARY
+# =========================================================
+
+tested = correct + incorrect
+
+accuracy = (
+    correct / tested * 100
+    if tested > 0
+    else 0
+)
+
+
+print()
+print("=" * 60)
+print("NORMAL IMAGE VALIDATION COMPLETE")
+print("=" * 60)
+
+print(
+    f"Total normal images: {len(NORMAL_IMAGES)}"
+)
+
+print(
+    f"Successfully tested: {tested}"
+)
+
+print(
+    f"Correct: {correct}"
+)
+
+print(
+    f"Incorrect: {incorrect}"
+)
+
+print(
+    f"Errors: {errors}"
+)
+
+print(
+    f"Normal-image accuracy: {accuracy:.2f}%"
+)
+
+print()
+print(
+    f"Results saved to:"
+)
+
+print(
+    OUTPUT_FILE
+)
+
