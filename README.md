@@ -196,68 +196,38 @@ Visual Explanation
 
 The explanation provides additional visual context and is not a clinical diagnostic tool.
 
-🖥️ Application Screenshots
+# 🖥️ Application Screenshots
+
+The following screenshots show the main RetinaAI application workflow.
 
 All screenshots are stored in:
 
+```text
 docs/screenshots/
+```
 
-🔐 Login
+### 🔐 Login
 
+![RetinaAI Login](docs/screenshots/login.png)
 
+### 🖼️ Retinal Image Upload
 
-🖼️ Retinal Image Upload
+![RetinaAI Upload](docs/screenshots/upload.png)
 
+### 📊 Screening Result
 
+![RetinaAI Screening Result](docs/screenshots/result.png)
 
-📊 Screening Result
+### 🔥 Grad-CAM Explainability
 
+![RetinaAI Grad-CAM](docs/screenshots/gradcam.png)
 
+### 📄 Screening Report
 
-🔥 Grad-CAM Explainability
+![RetinaAI Screening Report](docs/screenshots/report.png)
+## 🏗️ Project Structure
 
-
-
-📄 Screening Report
-
-
-
-The screenshot filenames above match the files currently in your screenshots folder. If you rename them to include .png, update the corresponding paths in this section.
-
-📄 Automated Screening Report
-
-After a screening is completed, RetinaAI generates a structured PDF report containing information such as:
-
-User name
-
-User email
-
-Screening ID
-
-Screening date
-
-Original image-quality score
-
-Final image-quality score
-
-Quality status
-
-Classification source
-
-Referable probability
-
-Screening decision
-
-Explainability information
-
-Recommendation
-
-Clinical disclaimer
-
-The report can be viewed directly inside the application using the built-in report viewer.
-
-🏗️ Project Structure
-
+```text
 Diabetic_Retinopathy/
 │
 ├── web/
@@ -265,12 +235,10 @@ Diabetic_Retinopathy/
 │   ├── dr_web/
 │   │   ├── settings.py
 │   │   ├── urls.py
-│   │   ├── wsgi.py
-│   │   └── ...
+│   │   └── wsgi.py
 │   │
 │   └── screening/
 │       ├── migrations/
-│       │   └── 0001_initial.py
 │       ├── templates/
 │       │   ├── registration/
 │       │   │   ├── login.html
@@ -296,15 +264,16 @@ Diabetic_Retinopathy/
 │
 ├── docs/
 │   └── screenshots/
-│       ├── gradcam
-│       ├── login
-│       ├── report
-│       ├── result
+│       ├── gradcam.png
+│       ├── login.png
+│       ├── report.png
+│       ├── result.png
 │       └── upload.png
 │
 ├── requirements.txt
 ├── .gitignore
 └── README.md
+```
 
 🛠️ Technology Stack
 
