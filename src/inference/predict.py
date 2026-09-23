@@ -1028,7 +1028,8 @@ def create_screening_report(
     classification_source,
     referable_probability,
     decision,
-    gradcam_file
+    gradcam_file,
+    user_info=None
 ):
 
     enhancement_applied = (
@@ -1041,7 +1042,25 @@ def create_screening_report(
 
         "project":
             "Diabetic Retinopathy AI Screening",
+    "user": {
+    "name": (
+        user_info.get(
+            "name",
+            "Unknown User"
+        )
+        if user_info
+        else "Unknown User"
+    ),
 
+    "email": (
+        user_info.get(
+            "email",
+            "Not available"
+        )
+        if user_info
+        else "Not available"
+    ),
+},
         "image":
             image_path.name,
 
@@ -1173,7 +1192,8 @@ def create_screening_report(
 # =========================================================
 
 def run_pipeline(
-    image_path
+    image_path,
+    user_info=None
 ):
 
     image_path = Path(
@@ -1688,8 +1708,10 @@ def run_pipeline(
 
         gradcam_file=(
             gradcam_file
-        )
+        ),
+        user_info=user_info
     )
+    
     # =========================================================
     # GENERATE SCREENING REPORT
     # =========================================================
@@ -1803,63 +1825,43 @@ def run_pipeline(
     # =========================================================
     # RETURN RESULT TO DJANGO
     # =========================================================
-
     return {
-        "original_quality": float(
-            original_score
+    "original_quality": float(
+        original_score
+    ),
+
+    "final_quality": float(
+        final_quality_score
+    ),
+
+    "quality_status":
+        final_quality_status,
+
+    "classification_source":
+        classification_source,
+
+    "referable_probability":
+        float(referable_probability),
+
+    "decision":
+        decision,
+
+    "gradcam_generated":
+        True,
+
+    "gradcam_path":
+        str(gradcam_file),
+
+    "referable_probability_percent":
+        referable_probability * 100,
+
+    "report_path":
+        report_path,
+
+    "recommendation":
+        (
+            "AI-assisted screening completed. "
+            "Please consult an eye-care professional "
+            "for clinical interpretation."
         ),
-
-        "final_quality": float(
-            final_quality_score
-        ),
-
-        "quality_status":
-            final_quality_status,
-
-        "classification_source":
-            classification_source,
-
-        "referable_probability":
-            float(
-                referable_probability
-            ),
-
-        "decision":
-            decision,
-
-        "gradcam_generated":
-            True,
-
-        "gradcam_path":
-            str(
-                gradcam_file
-            ),
-"referable_probability_percent":
-    referable_probability * 100,
-
-"report_path":
-    report_path,
-    }
-
-    # =========================================================
-# COMMAND LINE
-# =========================================================
-
-if __name__ == "__main__":
-
-    if len(sys.argv) < 2:
-
-        print(
-            "\nUsage:"
-        )
-
-        print(
-            "python src/inference/predict.py "
-            "<image_path>"
-        )
-
-        sys.exit(1)
-
-    run_pipeline(
-        sys.argv[1]
-    )
+}

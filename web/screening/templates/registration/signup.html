@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Create Account | RetinaAI</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #e9f9f0,
+                    #f7fffa
+                );
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #18352a;
+
+            padding: 25px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 520px;
+
+            background: white;
+
+            border-radius: 25px;
+
+            padding: 45px;
+
+            box-shadow:
+                0 25px 70px rgba(22, 101, 52, 0.14);
+        }
+
+        .brand {
+            text-align: center;
+
+            font-size: 32px;
+
+            font-weight: 800;
+
+            color: #087f5b;
+
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+
+            color: #718078;
+
+            margin-bottom: 32px;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 14px 15px;
+
+            border: 1px solid #d9e7df;
+
+            border-radius: 11px;
+
+            font-size: 15px;
+
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #0b9f68;
+
+            box-shadow:
+                0 0 0 4px rgba(11, 159, 104, 0.1);
+        }
+
+        .helptext {
+            color: #84938c;
+
+            font-size: 12px;
+
+            margin-top: 5px;
+
+            line-height: 1.5;
+        }
+
+        .error {
+            color: #c0392b;
+
+            font-size: 13px;
+
+            margin-top: 5px;
+        }
+
+        .button {
+            width: 100%;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 11px;
+
+            background: #087f5b;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            margin-top: 8px;
+        }
+
+        .button:hover {
+            background: #066b4d;
+        }
+
+        .login {
+            text-align: center;
+
+            margin-top: 23px;
+
+            font-size: 14px;
+
+            color: #718078;
+        }
+
+        .login a {
+            color: #087f5b;
+
+            font-weight: 700;
+
+            text-decoration: none;
+        }
+
+        .login a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+    <div class="brand">
+        RetinaAI
+    </div>
+
+    <div class="subtitle">
+        Create your screening account
+    </div>
+
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+
+        {% for field in form %}
+
+            <div class="field">
+
+                {{ field.label_tag }}
+
+                {{ field }}
+
+                {% if field.help_text %}
+                    <div class="helptext">
+                        {{ field.help_text }}
+                    </div>
+                {% endif %}
+
+                {% for error in field.errors %}
+                    <div class="error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        {% endfor %}
+
+
+        <button
+            type="submit"
+            class="button"
+        >
+            Create Account
+        </button>
+
+    </form>
+
+
+    <div class="login">
+
+        Already have an account?
+
+        <a href="{% url 'login' %}">
+            Login
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

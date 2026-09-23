@@ -53,49 +53,65 @@ def save_screening_report(report, image_path):
         output_dir
         / f"{image_path.stem}_screening_report.pdf"
     )
+    # =========================================================
+# EXTRACT REPORT DATA
+# =========================================================
 
-    # =====================================================
-    # REPORT VALUES
-    # =====================================================
+    image_quality = report.get("image_quality", {})
+    original_quality_data = image_quality.get("original", {})
+    final_quality_data = image_quality.get("final", {})
 
+    classification = report.get("classification", {})
+    explainability = report.get("explainability", {})
+
+    user = report.get("user", {})
+
+    user_name = user.get(
+        "name",
+        "Unknown User"
+    )
+
+    user_email = user.get(
+        "email",
+        "Not available"
+    )
     original_quality = float(
-        report.get(
-            "original_quality",
-            0
-        )
+        original_quality_data.get("quality_score", 0)
     )
 
     final_quality = float(
-        report.get(
-            "final_quality",
-            0
-        )
+        final_quality_data.get("quality_score", 0)
     )
 
-    quality_status = report.get(
-        "quality_status",
+    original_status = original_quality_data.get(
+        "status",
         "UNKNOWN"
     )
 
-    classification_source = report.get(
-        "classification_source",
-        "ORIGINAL"
+    quality_status = final_quality_data.get(
+        "status",
+    "UNKNOWN"
     )
 
+    classification_source = classification.get(
+        "source",
+        "ORIGINAL"
+)
+
     referable_probability = float(
-        report.get(
+        classification.get(
             "referable_probability",
             0
         )
     )
 
-    decision = report.get(
+    decision = classification.get(
         "decision",
         "UNKNOWN"
     )
 
-    gradcam_path = report.get(
-        "gradcam_file"
+    gradcam_path = explainability.get(
+        "file"
     )
 
     # =====================================================
@@ -241,7 +257,49 @@ def save_screening_report(report, image_path):
             title_style
         )
     )
+    story.append(
+    Spacer(1, 12)
+    )
 
+    story.append(
+        Paragraph(
+            "USER INFORMATION",
+            section_style  
+        )
+)
+
+    user_data = [
+        ["Name", user_name],
+        ["Email", user_email],
+        ["Screening ID", image_path.stem],
+        [
+            "Screening Date",
+            datetime.now().strftime(
+                "%d %B %Y, %H:%M"
+                )
+        ],
+    ]
+
+    user_table = Table(
+        user_data,
+        colWidths=[130, 350]
+    )
+
+    user_table.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#E8F5F1")),
+            ("TEXTCOLOR", (0, 0), (0, -1), colors.HexColor("#087F5B")),
+            ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+            ("FONTNAME", (1, 0), (1, -1), "Helvetica"),
+            ("FONTSIZE", (0, 0), (-1, -1), 9),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#D5E5DF")),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("TOPPADDING", (0, 0), (-1, -1), 7),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+            ])
+    )
+
+    story.append(user_table)
     story.append(
         Paragraph(
             "Explainable AI-assisted Fundus Screening Report",

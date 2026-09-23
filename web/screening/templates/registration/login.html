@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Login | RetinaAI</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #e9f9f0,
+                    #f7fffa
+                );
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #18352a;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1050px;
+            min-height: 620px;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            background: white;
+
+            border-radius: 28px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 25px 70px rgba(22, 101, 52, 0.15);
+        }
+
+        /* LEFT */
+
+        .left {
+            background:
+                linear-gradient(
+                    145deg,
+                    #087f5b,
+                    #0b9f68
+                );
+
+            color: white;
+
+            padding: 65px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            font-size: 34px;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .logo span {
+            color: #d8ffe8;
+        }
+
+        .tagline {
+            font-size: 18px;
+            line-height: 1.6;
+            opacity: 0.9;
+            max-width: 400px;
+        }
+
+        .feature-list {
+            margin-top: 45px;
+            list-style: none;
+        }
+
+        .feature-list li {
+            margin: 18px 0;
+            font-size: 15px;
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            margin-right: 12px;
+            font-weight: bold;
+        }
+
+        /* RIGHT */
+
+        .right {
+            padding: 65px 60px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .heading {
+            font-size: 31px;
+            font-weight: 750;
+            margin-bottom: 8px;
+        }
+
+        .subheading {
+            color: #6b7d74;
+            margin-bottom: 35px;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 17px;
+
+            border: 1px solid #d9e7df;
+
+            border-radius: 12px;
+
+            outline: none;
+
+            font-size: 15px;
+
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #0b9f68;
+
+            box-shadow:
+                0 0 0 4px rgba(11, 159, 104, 0.1);
+        }
+
+        .error {
+            color: #c0392b;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .button {
+            width: 100%;
+
+            border: none;
+
+            padding: 16px;
+
+            border-radius: 12px;
+
+            background: #087f5b;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            margin-top: 10px;
+
+            transition: 0.2s;
+        }
+
+        .button:hover {
+            background: #066b4d;
+            transform: translateY(-1px);
+        }
+
+        .bottom {
+            text-align: center;
+
+            margin-top: 25px;
+
+            color: #718078;
+
+            font-size: 14px;
+        }
+
+        .bottom a {
+            color: #087f5b;
+
+            font-weight: 700;
+
+            text-decoration: none;
+        }
+
+        .bottom a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 800px) {
+
+            .container {
+                grid-template-columns: 1fr;
+                margin: 20px;
+            }
+
+            .left {
+                display: none;
+            }
+
+            .right {
+                padding: 45px 30px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="left">
+
+        <div class="logo">
+            Retina<span>AI</span>
+        </div>
+
+        <div class="tagline">
+            AI-assisted diabetic retinopathy
+            screening with explainable visual analysis.
+        </div>
+
+        <ul class="feature-list">
+
+            <li>AI-powered fundus screening</li>
+
+            <li>Image quality assessment</li>
+
+            <li>Referable DR detection</li>
+
+            <li>Explainable Grad-CAM analysis</li>
+
+        </ul>
+
+    </div>
+
+
+    <div class="right">
+
+        <div class="heading">
+            Welcome back
+        </div>
+
+        <div class="subheading">
+            Sign in to continue to RetinaAI.
+        </div>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <div class="error">
+                    Invalid username or password.
+                    Please try again.
+                </div>
+            {% endif %}
+
+
+            <div class="field">
+
+                <label for="id_username">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    name="username"
+                    id="id_username"
+                    placeholder="Enter your username"
+                    required
+                    autofocus
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="id_password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    id="id_password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="button"
+            >
+                Login
+            </button>
+
+        </form>
+
+
+        <div class="bottom">
+
+            Don't have an account?
+
+            <a href="{% url 'signup' %}">
+                Create one
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

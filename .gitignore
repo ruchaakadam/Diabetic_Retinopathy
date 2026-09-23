@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.venv/
+env/
+.env
+.ml-venv/
+
+# macOS
+.DS_Store
+
+# Django local database
+web/db.sqlite3
+
+# User uploads / generated files
+web/media/
+web/outputs/
+outputs/
+
+# Python cache / generated artifacts
+*.pyc
+
+# IDE
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Django collected static files
+web/staticfiles/

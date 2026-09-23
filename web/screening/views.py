@@ -4,7 +4,8 @@ import shutil
 
 from django.conf import settings
 from django.shortcuts import render
-
+from django.contrib.auth.decorators import login_required
+from .models import Screening
 
 # =========================================================
 # PROJECT PATHS
@@ -36,8 +37,8 @@ from inference.predict import run_pipeline
 # UPLOAD + SCREENING
 # =========================================================
 
+@login_required(login_url="/login/")
 def upload_image(request):
-
     # =====================================================
     # GET REQUEST
     # =====================================================
@@ -177,11 +178,13 @@ def upload_image(request):
         print(
             "\nRunning AI screening pipeline..."
         )
-
-
         result = run_pipeline(
-            image_path
-        )
+    image_path,
+    user_info={
+        "name": request.user.get_full_name() or request.user.username,
+        "email": request.user.email,
+    }
+)
 
 
         # =================================================
@@ -285,8 +288,6 @@ def upload_image(request):
             result[
                 "report_url"
             ] = None
-
-
             # -------------------------------------------------
             # Make sure these values exist
             # -------------------------------------------------
@@ -305,7 +306,25 @@ def upload_image(request):
                 "gradcam_generated"
             ] = False
 
+                        # -------------------------------------------------
+            # SAVE SCREENING TO DATABASE
+            # -------------------------------------------------
 
+            Screening.objects.create(
+                user=request.user,
+                image=f"uploads/{original_filename}",
+                quality_score=result.get("final_quality"),
+                quality_status=result.get("quality_status"),
+                referable_probability=None,
+                decision=result.get("decision"),
+                classification_source=None,
+                recommendation=result.get(
+                    "recommendation",
+                    "Recapture fundus image."
+                ),
+                gradcam=None,
+                report=None
+            )
             # -------------------------------------------------
             # Show ungradeable result page
             # -------------------------------------------------
@@ -531,7 +550,64 @@ def upload_image(request):
             "report_url"
         ] = None
 
+    # =====================================================
+    # SAVE SCREENING TO DATABASE
+    # =====================================================
 
+    gradcam_db_path = None
+
+    if result.get("gradcam_url"):
+        gradcam_db_path = result["gradcam_url"].replace(
+            settings.MEDIA_URL,
+            "",
+            1
+        )
+
+
+    report_db_path = None
+
+    if result.get("report_url"):
+        report_db_path = result["report_url"].replace(
+            settings.MEDIA_URL,
+            "",
+            1
+        )
+
+
+    Screening.objects.create(
+
+        user=request.user,
+
+        image=f"uploads/{original_filename}",
+
+        quality_score=result.get(
+            "final_quality"
+        ),
+
+        quality_status=result.get(
+            "quality_status"
+        ),
+
+        referable_probability=result.get(
+            "referable_probability"
+        ),
+
+        decision=result.get(
+            "decision"
+        ),
+
+        classification_source=result.get(
+            "classification_source"
+        ),
+
+        recommendation=result.get(
+            "recommendation"
+        ),
+
+        gradcam=gradcam_db_path,
+
+        report=report_db_path
+    )
     # =====================================================
     # PRINT WEB RESULT
     # =====================================================
